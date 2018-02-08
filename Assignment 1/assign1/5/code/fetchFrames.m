@@ -2,7 +2,7 @@
 function [ frame ] = fetchFrames(video,noOfFrames,h,w)    
     vH=video.height;
     vW=video.width;
-    frameTotal=vid1.frames;
+    frameTotal=video.frames;
     frame=zeros(h,w,noOfFrames);
     for i=1:noOfFrames   
         img=rgb2gray(frameTotal(i).cdata);    
