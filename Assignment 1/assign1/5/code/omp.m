@@ -8,6 +8,8 @@ function [thetaFinal,support]=omp(y,A,eps)
     %normACol=sum(A.^2);    
     uA=bsxfun(@times,A,normACol.^-1);    
     rNorm=norm(r);
+    support=[];
+    theta=[];
     while(rNorm>eps)    
         %fprintf('%d%f \n',i,norm(r));
         aj=r'*uA;

@@ -1,5 +1,5 @@
 % Reconstruct the image
-function [outFrames] = reconstruct(frame,snapshot,noOfFrame,codes,patchSize,epsilon)
+function [outFrames] = reconstruct(snapshot,noOfFrame,codes,patchSize,epsilon)
 
     
     % Init
@@ -12,21 +12,27 @@ function [outFrames] = reconstruct(frame,snapshot,noOfFrame,codes,patchSize,epsi
     %creating shi (PatchSize*PatchSize*NoOfFrame) X (PatchSize*PatchSizex*NoOfFrame)
     dct2d=get2dDCT(patchSize,patchSize);
     if noOfFrame==2
-        shi=blkdiag(dct2d,dct2d);
-        invdct2d=blkdiag(dct2d',dct2d');
-    elseif noOfFrame==3
-        shi=blkdiag(dct2d,dct2d,dct2d);
-        invdct2d=blkdiag(dct2d',dct2d',dct2d');
+        shi=blkdiag(dct2d',dct2d');    
+    elseif noOfFrame==3         
+         shi=blkdiag(dct2d',dct2d',dct2d');        
+         %invdct2d=blkdiag(dct2d',dct2d',dct2d');
+         
+         %shi=[dct2d,dct2d,dct2d;dct2d,dct2d,dct2d;dct2d,dct2d,dct2d];
+         %invdct2d=[dct2d',dct2d',dct2d';dct2d',dct2d',dct2d';dct2d',dct2d',dct2d'];
+         
+         %shi=get3dDCT(patchSize,patchSize,noOfFrame);
+         %invdct2d=shi';
+         
+         %shi=get2dDCT(ceil(sqrt(192)),ceil(sqrt(192)));
+         %shi=shi(1:192,1:192);
+         %invdct2d=shi';
     elseif noOfFrame==5
-        shi=blkdiag(dct2d,dct2d,dct2d,dct2d,dct2d);
-        invdct2d=blkdiag(dct2d',dct2d',dct2d',dct2d',dct2d');
+        shi=blkdiag(dct2d',dct2d',dct2d',dct2d',dct2d');    
     elseif noOfFrame==7
-        shi=blkdiag(dct2d,dct2d,dct2d,dct2d,dct2d,dct2d,dct2d);    
-        invdct2d=blkdiag(dct2d',dct2d',dct2d',dct2d',dct2d',dct2d',dct2d');
+        shi=blkdiag(dct2d',dct2d',dct2d',dct2d',dct2d',dct2d',dct2d');
     end
     img=zeros(row,col,noOfFrame);
     patchAddedCount=zeros(row,col,noOfFrame);
-    img1=frame(:,:,1);
     for r=1:row-patchSize+1
         fprintf('r=%d\n',r);
         for c=1:col-patchSize+1
@@ -38,7 +44,7 @@ function [outFrames] = reconstruct(frame,snapshot,noOfFrame,codes,patchSize,epsi
             phi=getPhi(codes,r,c,patchSize);
             A=phi*shi;
             theta=omp(pEVec,A,epsilon);
-            xVec=invdct2d*theta;            
+            xVec=shi*theta;               
             xMat=convert3dVectToMat(xVec,patchSize,noOfFrame);
             for t=1:noOfFrame
                 img(x1:x2,y1:y2,t)=img(x1:x2,y1:y2,t)+xMat(:,:,t);
@@ -78,7 +84,7 @@ end
 
 function [dct2dMtx]=get2dDCT(M,N)
     %c=reshape(b*reshape(a',4,1),2,2)'
-    d=M*N;
+    d=round(M*N);
     dct2dMtx=zeros(d,d);
     r=1;
     for u=1:M
@@ -102,6 +108,49 @@ function [dct2dMtx]=get2dDCT(M,N)
                 end
             end
             r=r+1;
+        end
+    end
+end
+
+
+
+function [dct2dMtx]=get3dDCT(M,N,T)
+    %c=reshape(b*reshape(a',4,1),2,2)'
+    d=M*N;
+    dct2dMtx=zeros(d*T,d*T);
+    r=1;
+    for w=1:T
+        if (w-1) == 0
+            c3=sqrt(1/T);
+        else
+            c3=sqrt(2/T);
+        end    
+        for u=1:M
+            if (u-1) == 0
+                c1=sqrt(1/M);
+            else
+                c1=sqrt(2/M);
+            end
+            for v=1:N
+                if (v-1) == 0
+                    c2=sqrt(1/N);
+                else
+                    c2=sqrt(2/N);
+                end        
+                c=1;
+                for t=1:T                
+                    for m=1:M                           
+                        for n=1:N
+                         val=c1*c2*c3*cos( (pi*(2*(m-1)+1)*(u-1) )/(2*M) )...
+                                * cos( (pi*(2*(n-1)+1)*(v-1) )/(2*N) ) ...
+                                * cos( (pi*(2*(t-1)+1)*(w-1) )/(2*T) );                        
+                         dct2dMtx(r,c)=val;
+                         c=c+1;
+                        end
+                    end
+                end
+                r=r+1;
+            end
         end
     end
 end
