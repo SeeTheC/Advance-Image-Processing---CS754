@@ -1,7 +1,7 @@
 % Generate IID guassain noise
 function noise= getGuassainNoise(row,col,stdDev)    
     %adding noise to an image    
-    rng(0,'twister');
+    %rng(0,'twister');
     mean = 0.0;
     sigma = stdDev;
     noise = sigma.*randn(row,col) + mean;    

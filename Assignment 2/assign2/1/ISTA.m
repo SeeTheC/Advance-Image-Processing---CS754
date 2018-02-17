@@ -1,9 +1,9 @@
-function [newtheta]=ISTA(y,A,lambda,convergeVal,alphaAdd)
+function [newtheta]=ISTA(y,A,lambda,convergeVal,alpha)
     [row,col]=size(A);
     theta=zeros(col,1);
     newtheta=abs(2.*rand(col,1)-1);
-    k=0;
-    alpha=eigs((A'*A),1)+alphaAdd;            % +100;
+    k=0;    
+    %alpha=eigs((A'*A),1)+alphaAdd;   
     % disp(norm(theta)-norm(newtheta));
     error=norm(theta-newtheta);
     while(error>convergeVal)            %0.001
