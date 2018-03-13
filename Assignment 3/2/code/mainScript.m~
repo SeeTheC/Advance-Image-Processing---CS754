@@ -20,29 +20,47 @@ axis tight,axis on;
 o1 = get(gca, 'Position');
 colorbar(),set(gca, 'Position', o1);
 
-%% 0)  Finding Projection
+%%  Finding Projection
 totalAngles=18;
 theta = randi([0 179],1,totalAngles);
 [R,xp] = radon(img1,theta);
 
-%% Part a)  RamLak filter
-% We have implemented our OWN RAMLAK implemented
-imgRamLak=RamLakFilter(R,theta);
-
-figure('name','Reconstruction using RamLak Filter');
-imshow(imgRamLak,[]);
-title('\fontsize{10}{\color{magenta} Reconstruction using "Own" RamLak Filtered BP}');
-
-
-%% Using irandon method of Matlab
+%% Test
+%{
 I2 = iradon(R,theta,'linear','Ram-Lak');
 
 figure('name','Reconstruction using RamLak Filter');
 imshow(I2,[]);
-title('\fontsize{10}{\color{magenta} Reconstruction using "iradon" RamLak Filtered BP}');
+title('\fontsize{10}{\color{magenta}Reconstruction using RamLak Filter}');
+axis tight,axis on;
+o1 = get(gca, 'Position');
+colorbar(),set(gca, 'Position', o1)
 
+%}
+%% Part a) RamLak filter
+% We have implemented our own RAMLAK implemented
+imgRamLak=RamLakFilter(R,theta);
 
-%% 2. Part b) Compressed Sensing
+%Reco
+
+figure('name','Reconstruction using RamLak Filter');
+imshow(imgRamLak,[]);
+title('\fontsize{10}{\color{magenta} Reconstruction using "Own" RamLak Filter}');
+axis tight,axis on;
+o1 = get(gca, 'Position');
+colorbar(),set(gca, 'Position', o1);
+
+%% test
+% [I,H]=iradon(R,theta);
+% 
+% figure('name','test');
+% imshow(I,[]);
+% title('\fontsize{10}{\color{red}test}');
+% axis tight,axis on;
+% o1 = get(gca, 'Position');
+% colorbar(),set(gca, 'Position', o1);
+
+%% 2. Part b)
 % E(x) = |y − Ax|^2 + λ|x|_1
 % y= sum total of # of bins for each angle
 m=size(R,1);
@@ -58,7 +76,7 @@ lambda = 8;
 dctcoeff=reshape(beta,size(img1,1),size(img1,2));
 f=idct2(dctcoeff);
 figure('name','Reconstruction using CS');
-imshow(f,[]);
+imshow(f,[]),impixelinfo;
 title('\fontsize{10}{\color{magenta}Reconstruction using CS}');
 
 %% 3. Part c) Coupled CS
