@@ -49,9 +49,15 @@ classdef CoupledCSProjMtx
                     for j=i:obj.coupleSize                       
                         angles=obj.theta{j}; 
                         projectionMat=yCell{j}; 
-                        %x=iradon(projectionMat,angles,'linear','Ram-Lak',1,max(obj.h,obj.w));                        
-                        %Atx=dct2(x);
-                        Atx=dct2(iradon(projectionMat,angles,'linear','Ram-Lak',1,obj.h));
+                        x=iradon(projectionMat,angles,'linear','Ram-Lak',1,max(obj.h,obj.w));
+                        if size(x,1)<obj.h)
+                            diff=obj.h-size(x,1);
+                            left=floor(diff/2);
+                            right=ceil(diff/2);
+                            x=x(left+1,size(x,1)-h:)
+                        end
+                        Atx=dct2(x);
+                        %Atx=dct2(iradon(projectionMat,angles,'linear','Ram-Lak',1,obj.h));
                         projSum=projSum+Atx;
                     end    
                     predictBeta=horzcat(predictBeta,Atx);
