@@ -10,7 +10,7 @@ file1='../data/t1_icbm_normal_1mm_pn0_rf20.rawb.png';
 file2='../data/t1_icbm_normal_1mm_pn3_rf20.rawb.png';
 img1=imread(file1);
 img1=double(img1);
-img2=imread(file2);
+img2=imread(file2); 
 img2=double(img2);
 
 figure('name','Original brain cross section image');
@@ -61,9 +61,14 @@ figure('name','Reconstruction using CS');
 imshow(f,[]);
 title('\fontsize{10}{\color{magenta}Reconstruction using CS}');
 
-%% 3. Part c) Coupled CS
-% E(x) = |y − Ax|^2 + λ|x|_1
-% y= sum total of # of bins for each angle
+%% 3. Part c) Coupled CS with 2 slices
+% $E(\beta_1,\beta_2) =  ||y_1 - R_1U\beta_1||^2 + ||y_2 - R_2U\beta_2||^2$
+% + $\lambda||\beta_1||_1 + \lambda||\beta_2-\beta_1||_1$
+%
+% $=  ||y_1 - R_1U\beta_1||^2 + ||y_2 - R_2U(\beta_1 + \Delta\beta_{21})||^2 + ||y_3 - R_3U(\beta_1 + \Delta\beta_{21} + \Delta\beta_{32})||^2$
+% + $\lambda||\beta_1||_1 + \lambda||\Delta\beta_{21}||_1$
+% 
+% Convert this in to matrix form.
 
 totalAngles=18;
 theta1 = randi([0 179],1,totalAngles);
@@ -108,9 +113,14 @@ img=(f-min(f(:)));img=img/max(img(:));
 imshow(img),colorbar
 title('\fontsize{10}{\color{magenta}Reconst using Coupled CS: Image 2}');
 
-%% 4. Part c) Coupled CS # Slices
-% E(x) = |y − Ax|^2 + λ|x|_1
-% y= sum total of # of bins for each angle
+%% 4. Part c) Coupled CS 3 Slices
+% $E(\beta_1,\beta_2,\beta_3) =  ||y_1 - R_1U\beta_1||^2 + ||y_2 - R_2U\beta_2||^2 + ||y_3 - R_3U\beta_3||^2$
+% + $\lambda||\beta_1||_1 + \lambda||\beta_2-\beta_1||_1  + \lambda||\beta_3-\beta_2||_1$
+%
+% $=  ||y_1 - R_1U\beta_1||^2 + ||y_2 - R_2U(\beta_1 + \Delta\beta_{21})||^2 + ||y_3 - R_3U(\beta_1 + \Delta\beta_{21} + \Delta\beta_{32})||^2$
+% + $\lambda||\beta_1||_1 + \lambda||\Delta\beta_{21}||_1  + \lambda||\Delta\beta_{32}||_1$
+% 
+% Convert this in to matrix form.
 
 file1='../data/slice_50.png';
 file2='../data/slice_51.png';

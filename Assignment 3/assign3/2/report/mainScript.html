@@ -112,7 +112,9 @@ f=idct2(dctcoeff);
 figure(<span class="string">'name'</span>,<span class="string">'Reconstruction using CS'</span>);
 imshow(f,[]);
 title(<span class="string">'\fontsize{10}{\color{magenta}Reconstruction using CS}'</span>);
-</pre><img vspace="5" hspace="5" src="mainScript_04.png" alt=""> <h2>3. Part c) Coupled CS<a name="8"></a></h2><p>E(x) = <tt>y &#8722; Ax</tt>^2 + &#955;|x|_1 y= sum total of # of bins for each angle</p><pre class="codeinput">totalAngles=18;
+</pre><img vspace="5" hspace="5" src="mainScript_04.png" alt=""> <h2>3. Part c) Coupled CS with 2 slice<a name="8"></a></h2>
+<p><img src="mainScript_eq01765951132684515451.png" alt="$E(\beta_1,\beta_2) =  ||y_1 - R_1U\beta_1||^2 + ||y_2 - R_2U\beta_2||^2$"> + <img src="mainScript_eq07834620411119653999.png" alt="$\lambda||\beta_1||_1 + \lambda||\beta_2-\beta_1||_1$"></p><p><img src="mainScript_eq15474143382771167988.png" alt="$=  ||y_1 - R_1U\beta_1||^2 + ||y_2 - R_2U(\beta_1 + \Delta\beta_{21})||^2 + ||y_3 - R_3U(\beta_1 + \Delta\beta_{21} + \Delta\beta_{32})||^2$"> + <img src="mainScript_eq08779528902481608689.png" alt="$\lambda||\beta_1||_1 + \lambda||\Delta\beta_{21}||_1$"></p><p>Convert this in to matrix form.</p>
+<pre class="codeinput">totalAngles=18;
 theta1 = randi([0 179],1,totalAngles);
 theta2 = randi([0 179],1,totalAngles);
 [R1,xp1] = radon(img1,theta1);
@@ -148,7 +150,9 @@ subplot(1,2,2),
 img=(f-min(f(:)));img=img/max(img(:));
 imshow(img),colorbar
 title(<span class="string">'\fontsize{10}{\color{magenta}Reconst using Coupled CS: Image 2}'</span>);
-</pre><img vspace="5" hspace="5" src="mainScript_05.png" alt=""> <h2>4. Part c) Coupled CS # Slices<a name="12"></a></h2><p>E(x) = <tt>y &#8722; Ax</tt>^2 + &#955;|x|_1 y= sum total of # of bins for each angle</p><pre class="codeinput">file1=<span class="string">'../data/slice_50.png'</span>;
+</pre><img vspace="5" hspace="5" src="mainScript_05.png" alt=""> <h2>4. Part c) Coupled CS with 3 Slices<a name="12"></a></h2>
+<p><img src="mainScript_eq17721837432692735379.png" alt="$E(\beta_1,\beta_2,\beta_3) =  ||y_1 - R_1U\beta_1||^2 + ||y_2 - R_2U\beta_2||^2 + ||y_3 - R_3U\beta_3||^2$"> + <img src="mainScript_eq17135665331501009797.png" alt="$\lambda||\beta_1||_1 + \lambda||\beta_2-\beta_1||_1  + \lambda||\beta_3-\beta_2||_1$"></p><p><img src="mainScript_eq15474143382771167988.png" alt="$=  ||y_1 - R_1U\beta_1||^2 + ||y_2 - R_2U(\beta_1 + \Delta\beta_{21})||^2 + ||y_3 - R_3U(\beta_1 + \Delta\beta_{21} + \Delta\beta_{32})||^2$"> + <img src="mainScript_eq17151181812496917721.png" alt="$\lambda||\beta_1||_1 + \lambda||\Delta\beta_{21}||_1  + \lambda||\Delta\beta_{32}||_1$"></p><p>Convert this in to matrix form.</p>
+<pre class="codeinput">file1=<span class="string">'../data/slice_50.png'</span>;
 file2=<span class="string">'../data/slice_51.png'</span>;
 file3=<span class="string">'../data/slice_52.png'</span>;
 
