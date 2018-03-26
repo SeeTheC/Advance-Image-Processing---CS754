@@ -6,6 +6,7 @@ function [totalError] = avgRelativeError(X, predX)
         error=norm(X(:,i)-predX(:,i))/norm(X(:,i));
         totalError=totalError+error;    
         %fprintf('%f\n',error);
-    end    
+    end   
+    totalError=totalError/N;
 end
 

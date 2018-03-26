@@ -3,32 +3,31 @@ function [y,phi,phiTphi,stdev] = initDataSet(X,p,N,m,f)
     phi=zeros(m,p,N);
     stdev=zeros(N,1);
     y=zeros(m,N);
-    a = -1*(1/ sqrt(m));
-    b = 1/ sqrt(m);
     for i=1:N
-        for j=1:m
-            for k=1:p
-                if(randi([0,1],1)==0)
-                    phi(j,k,i) = a;
-                else
-                    phi(j,k,i) = b;
-                end
-            end
-        end
+        ithPhi=randi([0,1],[m,p]);
+        ithPhi(ithPhi==0)=-1;
+        ithPhi=ithPhi.*(1/ sqrt(m));
+        phi(:,:,i)=ithPhi;
     end
     
     %% Finding Phi^2
-    phiTphi=zeros(p,p,N);
+    phiTphi=cell(N,1);
     for i=1:N        
-        phiTphi(:,:,i)=phi(:,:,i)'*phi(:,:,i);
+        phiTphi{i}=phi(:,:,i)'*phi(:,:,i);
     end
     %% Creating Y
+    stdev=0;normSum=0;
     for i=1:N
         tempY=phi(:,:,i)*X(:,i);
-        stdev(i)=f*(1/m*N)*sum(norm(tempY,1));
+        normSum=normSum+norm(tempY,1);       
+    end
+    stdev=f*(1/(m*N))*normSum;
+    for i=1:N
+        tempY=phi(:,:,i)*X(:,i);
         %noise=rand([m,1]).*stdev(i);
-        noise=randn(m,1).*stdev(i);        
+        noise=randn(m,1).*stdev;        
         y(:,i)=tempY+noise;
+        %y(:,i)=tempY;
     end
 
 end
