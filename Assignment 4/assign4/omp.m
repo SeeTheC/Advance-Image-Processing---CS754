@@ -11,7 +11,7 @@ function [thetaFinal,support]=omp(y,A,eps)
     support=[];
     theta=[];
     while(rNorm>eps)    
-        fprintf('old: i:%d rnom:%f ',i,rNorm);        
+        %fprintf('old: i:%d rnom:%f ',i,rNorm);        
         aj=r'*uA;
         [aMax, index]=max( abs(aj) );
         support=[support,index];        
@@ -20,7 +20,7 @@ function [thetaFinal,support]=omp(y,A,eps)
         %theta1=inv(Ati'*Ati)*Ati'*y;
         r=y-Ati*theta;
         rNorm=norm(r);
-        fprintf('new:i:%d rnom:%f \n',i,rNorm);
+        %fprintf('new:i:%d rnom:%f \n',i,rNorm);
         
         i=i+1;
     end

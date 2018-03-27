@@ -129,9 +129,10 @@ dctDic=kron(dctmtx(16)',dctmtx(16)');
 [xCoeff_dct ] = mnistTestDictionary(y,phi,dctDic,256);
 
 %% Avg Relative Error
+fprint('\** Avg Relative error for reconst K=20 m=90: Learnt Dic:%f \t DCT:%f',avr_ld,)
 avr_ld=avgRelativeError(X, Dict*xCoeff_ld);
 avr_dct=avgRelativeError(X, dctDic*xCoeff_dct);
-fprintf('* Avg Relative error for reconst K=20 m=90: Learnt Dic:%f  DCT:%f\n',avr_ld,avr_dct);
+
 %% Showing Reconstruction Result
 figure('name','Reconstruction Learnt Dic Result')
 for i=1:10

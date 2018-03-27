@@ -16,9 +16,7 @@ function [D,xCoeff]=ksvd1(y,phi,phiTphi,stdev,p,X,epsilon)
     %% Step1: sparse coding stage (N signals)
         for i=1:N
             A=phi(:,:,i)*D;            
-            %v1=omp(y(:,i),A,1);
-            %v2=OMP3(5,y(:,i)',A);
-            %v2=v2';
+            %v1=omp(y(:,i),A,1);           
             %v3=ompInterBased(y(:,i),A,5);
             %xCoeff(:,i)=omp(y(:,i),A,1);
             xCoeff(:,i)=ompInterBased(y(:,i),A,1,5);  
