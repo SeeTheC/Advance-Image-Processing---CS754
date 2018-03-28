@@ -1,7 +1,0 @@
-% It will predict the Dig
-function [ output_args ] = mnistTestDictionary(y,phi,Dic)
-
-
-
-end
-

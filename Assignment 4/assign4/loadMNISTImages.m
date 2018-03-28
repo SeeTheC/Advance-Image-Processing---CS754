@@ -16,7 +16,7 @@ function images=readImageDS(filename)
     fp = fopen(filename, 'rb');
     assert(fp ~= -1, ['Could not open ', filename, '']);
     magic = fread(fp, 1, 'int32', 0, 'ieee-be');
-    assert(magic == 2051, ['Bad magic number in ', filename, '']);
+    %assert(magic == 2051, ['Bad magic number in ', filename, '']);
     numImages = fread(fp, 1, 'int32', 0, 'ieee-be');
     numRows = fread(fp, 1, 'int32', 0, 'ieee-be');
     numCols = fread(fp, 1, 'int32', 0, 'ieee-be');
@@ -30,7 +30,7 @@ function labels=readLabelDS(filename)
     fp = fopen(filename, 'rb');
     assert(fp ~= -1, ['Could not open ', filename, '']);
     magic = fread(fp, 1, 'int32', 0, 'ieee-be');
-    assert(magic == 2049, ['Bad magic number in ', filename, '']);    
+    %assert(magic == 2049, ['Bad magic number in ', filename, '']);    
     numLabels = fread(fp, 1, 'int32', 0, 'ieee-be');
     labels = fread(fp, inf, 'unsigned char');
     fclose(fp);

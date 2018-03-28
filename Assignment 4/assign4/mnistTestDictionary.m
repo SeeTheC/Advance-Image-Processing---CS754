@@ -1,5 +1,5 @@
 % It will predict the Digit using Compressed measurement
-function [ xCoeff ] = mnistTestDictionary(y,phi,Dic,K)
+function [xCoeff] = mnistTestDictionary(y,phi,Dic,K)
     % Init
     N=size(y,2);
     xCoeff=zeros(K,N);

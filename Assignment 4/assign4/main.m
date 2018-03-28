@@ -96,17 +96,18 @@ clear idx;
 clear trainDS;
 clear trainLabel;
 %% Finding y and phi 
-m=[10,20,30,40,50,70,90];
-f=0.01;
+m=[10,20,30,40,50,70,90];f=0.01;
+k=[20,128];K=20;
+
 phi=[];phiTphi=[];
 X=trainSampleImg; N=noImgPerDigit*10; p=imgDim(1)*imgDim(2);
 [y,phi,phiTphi,stdev] = initDataSet(X,p,N,90,f);
 %% Blind C.S
 epsilon=1e-1;
 tic
-[Dict,xCoeff]=ksvd1(y,phi,phiTphi,stdev,p,X,epsilon);
+[Dict,xCoeff]=ksvd1(y,phi,phiTphi,stdev,p,X,K,epsilon);
 toc
-%%
+%% Plot of Dictionary learnt
 figure('name','Dictionary')
 for i=1:20
     subplot(4,5,i);
@@ -151,4 +152,66 @@ curfig=gcf;
 txt=strcat('\fontsize{10}{\color{magenta}Reconstruction via"2d-DCT" with  m:90}');
 title(curfig.Children(end-2),txt);
 
-%% 
+%% 3 Part C : Classification
+
+%% 3.1 Reading Data 
+trainFP='../data/train-images.idx3-ubyte';
+trainLabelFP='../data/train-labels.idx1-ubyte';
+[trainDS,trainLabel]=loadMNISTImages(trainFP,trainLabelFP);
+
+testFP='../data/t10k-images.idx3-ubyte';
+testLabelFP='../data/t10k-labels.idx1-ubyte';
+[testDS,testLabel]=loadMNISTImages(trainFP,trainLabelFP);
+
+noImgPerDigit=600;testImgPerDigit=20;
+[trainSampleImg,~] = extractDigitFromDS(trainDS,trainLabel,[16,16],noImgPerDigit,0);
+[testSampleImg,~] = extractDigitFromDS(testDS,testLabel,[16,16],testImgPerDigit,0);
+lg=meshgrid([1:600]);lg=lg(:,1:10);
+trainSampleLabel=reshape(lg,size(lg,1)*size(lg,2),1);
+lg=meshgrid([1:20]);lg=lg(:,1:10);
+testSampleLabel=reshape(lg,size(lg,1)*size(lg,2),1);
+clear trainDS; clear trainLabel;clear testDS; clear testLabel;
+imgDim=[16,16];
+%% 3.2 Training: Learning Dictionary
+m=[10,20,30,40,50,70,90];
+k=[80,128];f=0.01;
+classificationRate=zeros(numel(m),numel(k)+1);
+dctDic=kron(dctmtx(16)',dctmtx(16)');
+epsilon=1e-1;
+tic
+for mi=1:numel(m)
+    mVal=m(mi);phi=[];phiTphi=[];
+    X=trainSampleImg; N=noImgPerDigit*10; p=imgDim(1)*imgDim(2);
+    [trainY,trainPhi,phiTphi,stdev] = initDataSet(X,p,N,mVal,f);
+    [testY,testPhi,~,~] = initDataSet(testSampleImg,p,testImgPerDigit*10,mVal,f);        
+    fprintf('---------------[m=%d]------------\n',m(mi));
+    for ki=1:numel(k)
+        K=k(ki);
+        % Blind C.S        
+        [Dict,trainXCoeff]=ksvd1(trainY,trainPhi,phiTphi,stdev,p,X,K,epsilon);
+        
+        % Testing: With Learnt Dictionary
+        [testXCoeff] = mnistTestDictionary(testY,testPhi,Dict,K);
+        % classifiying 
+        [cRate] = nearestNeighbour(trainXCoeff,trainSampleLabel,testXCoeff,testSampleLabel);
+        correctRate(mi,ki)=cRate;
+    end
+    % Testing: With 2d-DCT Dictionary              
+    [trainXCoeff] = mnistTestDictionary(trainY,trainPhi,dctDic,p);
+    [testXCoeff ] = mnistTestDictionary(testY,testPhi,dctDic,p);    
+    [cRate] = nearestNeighbour(trainXCoeff,trainSampleLabel,testXCoeff,testSampleLabel);
+    classificationRate(mi,3)=cRate;
+    clear trainPhi;clear phiTphi;clear testPhi;                
+end
+%% 3.2 Plot Classification rate
+%r2=[11.5000,8.50,9.5000;16,15,9.5000;57.00,38.500,14.500;72,70,15;73.5000,71.5000,23.5000;83,81.5000,32.500;84,82,36.50];
+classificationRate=r2;
+x=m; c = {'m','b','r'};
+for i=1:size(classificationRate,2)
+    y=correctRate(:,i);
+    plot(x,y,strcat('*--',c{i})),hold on      
+end
+grid on;
+xlabel('m');
+ylabel('Classification rate %');
+legend('K:80','K:128','DCT');

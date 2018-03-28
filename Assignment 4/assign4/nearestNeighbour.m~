@@ -1,0 +1,5 @@
+function [c_rate] = nearestNeighbour(trainAlpha,trainLabel,testAlhpa,testLabel)
+    
+
+end
+

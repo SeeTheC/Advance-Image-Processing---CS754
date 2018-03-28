@@ -1,7 +1,6 @@
-function [D,xCoeff]=ksvd1(y,phi,phiTphi,stdev,p,X,epsilon)
+function [D,xCoeff]=ksvd1(y,phi,phiTphi,stdev,p,X,K,epsilon)
     % initialize dict
     [m,N]=size(y);   
-    K=20; %not sure
     % initialize dict randomly
     D=randn(p,K); % re-initialize dict...size of dict p*K
     for i=1:K;
