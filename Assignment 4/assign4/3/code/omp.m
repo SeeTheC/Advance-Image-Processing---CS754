@@ -1,4 +1,4 @@
-function [thetaFinal,support]=ompInterBased(y,A,T)
+function [thetaFinal,r,support]=omp(y,A,eps)
     support=[];
     i=1;r=y;
     [ySize,xSize]=size(A);
@@ -10,17 +10,17 @@ function [thetaFinal,support]=ompInterBased(y,A,T)
     rNorm=norm(r);
     support=[];
     theta=[];
-    while(i<=T)    
-        %fprintf('old: i:%d rnom:%f ',i,rNorm);  
+    while(rNorm>eps && i<128)    
+        %fprintf('old: i:%d rnom:%f ',i,rNorm);
         aj=r'*uA;
         [aMax, index]=max( abs(aj) );
         support=[support,index];        
         Ati=A(:,support);
         theta=Ati\y;
-        %theta1=inv(Ati'*Ati)*Ati'*y;
+        theta1=inv(Ati'*Ati)*Ati'*y;
         r=y-Ati*theta;
         rNorm=norm(r);
-        %fprintf('new: i:%d rnom:%f \n',i,rNorm); 
+        5fprintf('new: i:%d rnom:%f \n',i,rNorm); 
         i=i+1;
     end
     %fprintf('%d    %f \n',i,norm(r));

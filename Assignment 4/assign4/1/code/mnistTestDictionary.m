@@ -10,7 +10,7 @@ function [xCoeff] = mnistTestDictionary(y,phi,Dic,K)
          if isSq
             v1=omp(y(:,i),A,2);
          else
-            v1=ompInterBased(y(:,i),A,1,5);
+            v1=ompInterBased(y(:,i),A,5);
          end
          xCoeff(:,i)=v1;
     end

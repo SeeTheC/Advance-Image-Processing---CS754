@@ -56,7 +56,7 @@ legend('f:001','f:01','f:02','f:05', 'f:0.1','f:0.3');
 %% 2.PART B
 
 %% 2.1 Reading dataset
-%clear all;
+clear all;
 trainFP='../data/train-images.idx3-ubyte';
 trainLabelFP='../data/train-labels.idx1-ubyte';
 [trainDS,trainLabel]=loadMNISTImages(trainFP,trainLabelFP);
@@ -69,11 +69,10 @@ noImgPerDigit=600;testImgPerDigit=20;imgDim=[16,16];
 
 m=[10,20,30,40,50,70,90];f=0.01;
 k=[20,128];epsilon=0.5;
-
 dctDic=kron(dctmtx(16)',dctmtx(16)');    
 avg=zeros(numel(m),numel(k)+1);
 tic
-for mi=1:0
+for mi=1:numel(m)
     mVal=m(mi);trainPhi=[];phiTphi=[]; p=imgDim(1)*imgDim(2);
     [trainY,trainPhi,phiTphi,stdev] = initDataSet(trainSampleImg,p,noImgPerDigit*10,mVal,f);
     [testY,testPhi,~,~] = initDataSet(testSampleImg,p,testImgPerDigit*10,mVal,f);
@@ -90,9 +89,9 @@ for mi=1:0
         fprintf('* Avg Relative error for reconst K=%d m=%d: Learnt Dic:%f \n',K,m(mi),avg(mi,ki));
     end
     % Testing With 2d-dct
-    [xCoeff_dct ] = mnistTestDictionary(testY,testPhi,dctDic,p);
-    avg(mi,3)=avgRelativeError(testSampleImg, dctDic*xCoeff_dct);
-    fprintf('* Avg Relative error for reconst Dct m=%d: Learnt Dic:%f \n',m(mi),avg(mi,3));
+    %[xCoeff_dct ] = mnistTestDictionary(testY,testPhi,dctDic,p);
+    %avg(mi,3)=avgRelativeError(testSampleImg, dctDic*xCoeff_dct);
+    %fprintf('* Avg Relative error for reconst Dct m=%d: Learnt Dic:%f \n',m(mi),avg(mi,3));
     clear trainPhi; clear phiTphi; clear testPhi;
 end
 toc
@@ -190,7 +189,7 @@ classificationRate=zeros(numel(m),numel(k)+1);
 dctDic=kron(dctmtx(16)',dctmtx(16)');
 epsilon=1e-1;
 tic
-for mi=1:0
+for mi=1:numel(m)
     mVal=m(mi);phi=[];phiTphi=[];
     X=trainSampleImg; N=noImgPerDigit*10; p=imgDim(1)*imgDim(2);
     [trainY,trainPhi,phiTphi,stdev] = initDataSet(X,p,N,mVal,f);

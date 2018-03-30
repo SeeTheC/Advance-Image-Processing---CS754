@@ -15,7 +15,7 @@ function [D,xCoeff]=ksvd1(y,phi,phiTphi,stdev,p,X,K,epsilon)
     %% Step1: sparse coding stage (N signals)
         for i=1:N
             A=phi(:,:,i)*D;            
-            xCoeff(:,i)=ompInterBased(y(:,i),A,1,5);  
+            xCoeff(:,i)=ompInterBased(y(:,i),A,5);  
         end
     %% Step2: Codebook Update Stage        
         oldD=D;
@@ -53,7 +53,7 @@ function [D,xCoeff]=ksvd1(y,phi,phiTphi,stdev,p,X,K,epsilon)
          end
         yerr=yerr./N;
         change=abs(yerr-oldError);        
-        %fprintf('%d) rmseD:%d \t rmseXCoeff:%f \t yerr:%f \t change:%f \t AvgRErr:%f\n',idx,rmseD,rmseXCoeff,yerr,change,avgRelativeError(X, predX));
+        fprintf('%d) rmseD:%d \t rmseXCoeff:%f \t yerr:%f \t change:%f \t AvgRErr:%f\n',idx,rmseD,rmseXCoeff,yerr,change,avgRelativeError(X, predX));
         idx=idx+1;
         oldError=yerr;
     end
