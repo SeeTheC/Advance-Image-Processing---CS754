@@ -19,7 +19,50 @@ f1Error=zeros(size(s,2),size(stdev,2));
 f2Error=zeros(size(s,2),size(stdev,2));
 predF1=zeros(128,size(s,2)*size(stdev,2));
 predF2=zeros(128,size(s,2)*size(stdev,2));
-%% 1.2. Creating f from f1 and f2
+%% 1.2 Algo: Alternate Minimization
+% This algo uses the "Alternate Minimization" for the reconstruction.
+% 
+% Objective Function:
+%
+% $E(\theta_1,\theta_2) = || f-A_1\theta_1-A_2\theta_2||_2$ 
+%  |s.t| $\theta_1 \leq T_0$ |and|  $\theta_2 \leq T_0$ 
+% 
+% Where,
+%
+% $f1=A_1\theta_1$ |s.t| $A_1 = \phi \Psi_1$
+% |s.t A1 is DFT matrix of 128x128 &| $\theta_1$ |is| $T_0$ |sparse|
+%
+% $f2=A_2\theta_2$ |s.t| $A_1 = \phi \Psi_2$
+% 
+% $\Psi_1$ 1d-DFT Matrix, $\Psi_1 \in R^{128\times128}$
+%
+% $\Psi_2$ Identity Matrix, $\Psi_1 \in R^{128\times128}$
+% 
+% As we know that by C.S theory identity matrix is highly *incoherent* with DFT. 
+%
+% So here, $\phi$ is *Identity Matrix*, $\phi \in R^{128\times128}$
+%
+% Therefore,
+%
+% $A_1 = \Psi_1$
+%
+% $A_2 =  \Psi_2$
+% 
+% *Algo*
+%
+% For finding $\theta_1$ & $\theta_2$, we will use OMP with $T_0$.
+% 
+% * Initalize: $\theta_2$ to some random value
+% * Do the following till convergence (ith iteration)
+% 
+% # $f'=f-A_2*\theta_2^i$ 
+% # $\theta_1^{i+1} = OMP (f',A_1,T_0)$
+% # $f''=f-A_1*\theta_1^{i+1}$
+% # $\theta_2^{i+1} = OMP (f'',A_2,T_0)$
+%
+
+%% 1.3. Creating f from f1 and f2 and reconstructing f1 & f2 from f
+
 tic
 for i=1:size(s,2)
     fprintf('-------------------[sparsity:%d]-------------------\n',s(i));
@@ -41,7 +84,7 @@ for i=1:size(s,2)
         std=stdev(j).*mean(f);
         noise=randn(128,1)*std;
         noisyF=f+noise;
-        % Using alternate min max technique to find coeffs        
+        % Using alternate min. technique to find coeffs        
         [f1Separated,f2Separated]=findSepratedSignals(noisyF,A1,A2,T0);        
         %fprintf('sparsity=%d sigma=%f error=%f\n',s(i),stdev(j),norm(f-(f1Separated+f2Separated)));
         avg(i,j)=avgRelativeError([f1,f2],[f1Separated,f2Separated]);
@@ -52,7 +95,7 @@ for i=1:size(s,2)
     end
 end
 toc
-%% 1.3 Plot of error grpah: Avf. Realtive Error, F1 RMS & F2 RMS
+%% 1.4 Plot of error grpah: Avf. Realtive Error, F1 RMS & F2 RMS
 
 figure('name','Avg. Relative error')
 avg=avg./max(avg(:));
@@ -95,25 +138,4 @@ xlabel('Sparsity');
 ylabel('RMS');
 legend('std:0','std:0.1','std:0.3','std:0.4','std:0.6','std:0.8','std:1','Location','northwest');
 
-%% Plotting
-figure('name','F2 orginal Signal');
-plot(real(f2))
-title('\fontsize{10}{\color{red}F2 orginal Signal}');
-axis tight,axis on;
-o1 = get(gca, 'Position');
-colorbar(),set(gca, 'Position', o1);
-figure('name','F2 Reconstructed Signal');
-plot(real(f2Separated))
-title('\fontsize{10}{\color{red}F2 Reconstructed Signal}');
-axis tight,axis on;
-o1 = get(gca, 'Position');
-colorbar(),set(gca, 'Position', o1);
-colorbar(),set(gca, 'Position', o1);
-
-figure('name','noise');
-plot(real(noise))
-title('\fontsize{10}{\color{red}noise}');
-axis tight,axis on;
-o1 = get(gca, 'Position');
-colorbar(),set(gca, 'Position', o1);
 
