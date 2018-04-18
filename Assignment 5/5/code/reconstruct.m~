@@ -1,0 +1,7 @@
+function [x] = reconstruct(y,phi,mvcovar,stdev)
+    invMVCovar=inv(mvcovar);
+    lamda= stdev*(invMVCovar+invMVCovar');
+    x=(phi'*phi+lamda)\(phi'*y);
+
+end
+
