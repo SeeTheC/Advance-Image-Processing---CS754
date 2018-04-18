@@ -1,6 +1,7 @@
-function [x] = reconstruct(y,phi,mvcovar,stdev,trueX)
+function [x] = reconstruct(y,phi,mvcovar,stdev,m)
+    sigma=diag(ones(1,m)*stdev);    
     invMVCovar=inv(mvcovar);
-    lamda= stdev*(invMVCovar+invMVCovar');
-    x=(phi'*phi+lamda)\(phi'*y);
+    invSigma=inv(sigma);        
+    x=(phi'*invSigma*phi+invMVCovar)\(phi'*invSigma*y);
 end
 
