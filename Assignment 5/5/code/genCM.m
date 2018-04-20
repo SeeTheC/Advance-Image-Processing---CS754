@@ -13,9 +13,10 @@ function [y,phi,stdev] = genCM(X,m,n)
     normSum=0;
     for i=1:noOfSample
         tempY=phi*X(i,:)';
-        normSum=normSum+norm(tempY,1);       
+        normSum=normSum+mean(tempY,1);       
     end
-    stdev=f*(1/(m*noOfSample))*normSum;
+    stdev=f*(1/(noOfSample))*abs(normSum);
+    
     for i=1:noOfSample
         tempY=phi*X(i,:)';
         noise=randn(m,1).*stdev;        

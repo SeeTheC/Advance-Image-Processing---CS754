@@ -46,7 +46,7 @@ ylabel('rmse');
 xlim([min(m)-5,max(m)+15]),
 grid on,
 hold off;
-%% 2 Init With aplha as "3"
+%% 2 Init With aplha as "0"
 alpha=0;
 %% 2.1 Generating 10 x
 mu=zeros(1,n);
