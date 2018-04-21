@@ -22,10 +22,10 @@ noOfM=numel(m);
 aplha3RmsError=zeros(noOfM,1);
 fprintf('---------[alpha:%d]--------------- \n',alpha);
 for i=1:noOfM
-    [y,phi,stdev,sd] = genCM(X,m(i),n);    
+    [y,phi,stdev] = genCM(X,m(i),n);    
     error=0;    
     for j=1:noOfX
-        predictedX=reconstruct(y(:,j),phi,mvcovar,sd,m(i)); 
+        predictedX=reconstruct(y(:,j),phi,mvcovar,stdev,m(i)); 
         error=rmse(predictedX,X(j,:)')+error;
     end
     error=error/noOfX;
@@ -46,7 +46,7 @@ ylabel('rmse');
 xlim([min(m)-5,max(m)+15]),
 grid on,
 hold off;
-%% 2 Init With aplha as "3"
+%% 2 Init With aplha as "0"
 alpha=0;
 %% 2.1 Generating 10 x
 mu=zeros(1,n);
@@ -59,10 +59,10 @@ noOfM=numel(m);
 aplha0RmsError=zeros(noOfM,1);
 fprintf('---------[alpha:%d]--------------- \n',alpha);
 for i=1:noOfM
-    [y,phi,stdev,sd] = genCM(X,m(i),n);    
+    [y,phi,stdev] = genCM(X,m(i),n);    
     error=0;    
     for j=1:noOfX
-        predictedX=reconstruct(y(:,j),phi,mvcovar,sd,m(i)); 
+        predictedX=reconstruct(y(:,j),phi,mvcovar,stdev,m(i)); 
         error=rmse(predictedX,X(j,:)')+error;
     end
     error=error/noOfX;
@@ -74,10 +74,10 @@ end
 figure('name','For aplha:0')
 plot(m',aplha0RmsError),hold on
 for i=1:numel(m)
-    txt1 = strcat('\color{blue} \leftarrow ',num2str(aplha3RmsError(i)));
-    text(m(i),aplha3RmsError(i),txt1);    
+    txt1 = strcat('\color{blue} \leftarrow ',num2str(aplha0RmsError(i)));
+    text(m(i),aplha0RmsError(i),txt1);    
 end
-title('\fontsize{10}{\color{magenta} Reconstruction for alpha:}');
+title('\fontsize{10}{\color{magenta} Reconstruction for alpha:0}');
 xlabel('m');
 ylabel('rmse');
 xlim([min(m)-5,max(m)+15]),
@@ -92,7 +92,7 @@ for i=1:numel(m)
     txt1 = strcat('\color{blue} \downarrow ',num2str(aplha3RmsError(i)));
     text(m(i),aplha3RmsError(i)+0.05,txt1);
     
-    txt1 = strcat('\color{blue} \leftarrow ',num2str(aplha0RmsError(i)));
+    txt1 = strcat('\color{orange} \leftarrow ',num2str(aplha0RmsError(i)));
     text(m(i),aplha0RmsError(i),txt1);
 end
 title('\fontsize{10}{\color{magenta} Reconstruction for alpha:3 & 0}');
